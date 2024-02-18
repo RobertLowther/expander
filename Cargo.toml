@@ -1,0 +1,30 @@
+[package]
+name = "expander"
+authors = ["DEADBLACKCLOVER <deadblackclover@protonmail.com>"]
+description = "Monitor keyboard input and replace predefined keys with associated values"
+version = "0.1.0"
+edition = "2021"
+license = "GPL-3.0"
+readme = "README.md"
+homepage = "https://github.com/RobertLowther/keylogger"
+repository = "https://github.com/RobertLowther/keylogger"
+keywords = ["text", "expander", "utility"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+chrono = "0.4.30"
+clap = { version = "4", features = ["derive"] }
+device_query = "1.1.3"
+#tray-item = "0.9.0"
+
+[package.metadata.deb]
+maintainer = "RobertLowther <drail159@gmail.com>"
+copyright = "2020, RobertLowther <drail159@protonmail.com>"
+depends = "$auto"
+section = "utils"
+priority = "optional"
+assets = [
+    ["target/release/expander", "usr/bin/", "755"],
+    ["README.md", "usr/share/doc/expander/README", "644"],
+]
