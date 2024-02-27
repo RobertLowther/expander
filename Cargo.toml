@@ -13,9 +13,11 @@ keywords = ["text", "expander", "utility"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-chrono = "0.4.30"
+winapi = "0.3.9"
+winput = "0.2.5"
 clap = { version = "4", features = ["derive"] }
 device_query = "1.1.3"
+regex = "1.10.3"
 #tray-item = { version = "0.9.0", features = ["ksni"] }
 
 [package.metadata.deb]

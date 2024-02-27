@@ -1,85 +1,59 @@
-mod keylogger;
-use std::io::Write;
+mod keymanager;
+use keymanager::{send_input, vk_to_string};
+use winput::{Action, Input, Vk};
+use winput::message_loop;
+use winput::message_loop::EventReceiver;
 
 fn main() {
-    let mut prev_ctrl_keys: Vec<String> = Vec::new();
-    let mut prev_data_keys: Vec<String> = Vec::new();
-    const INITIAL_BUFFER_VALUE: Option<String> = None;
-    let mut buffer: [Option<String>; 32] = [INITIAL_BUFFER_VALUE; 32];
-    let mut buffer_next: usize = 0;
+    let receiver: EventReceiver = message_loop::start().unwrap();
+    let mut input_string = String::new();
+    let mut input_keys: Vec<Vk> = vec![];
+    let mut is_shift: u8 = 0;
 
-    let delimiters: [String; 3]= [
-        String::from("Space"),
-        String::from("Enter"),
-        String::from("Tab"),
-    ];
-    
     loop {
-        // Get all keys that were depressed this frame
-        // and sort them by type
-        let all_keys = keylogger::run();
-        let curr_ctrl_keys = all_keys.get("ctrl").unwrap().to_vec();
-        let curr_data_keys = all_keys.get("data").unwrap().to_vec();
-
-        // Determine which keys are newly depressed and store them in vectors
-        let ctrl_equal = curr_ctrl_keys == prev_ctrl_keys;
-        let data_equal = curr_data_keys == prev_data_keys;
-
-        let mut new_ctrl_keys: Vec<String> = Vec::new();
-        let mut new_data_keys: Vec<String> = Vec::new();
+        let mut key: Option<Vk> = None;
         
-        if !ctrl_equal && curr_ctrl_keys.len() > 0 {
-            // print new characters
-            new_ctrl_keys = get_new_keys(&prev_ctrl_keys, &curr_ctrl_keys);
-        }
-
-        if !data_equal && curr_data_keys.len() > 0 {
-            // print new characters
-            new_data_keys = get_new_keys(&prev_data_keys, &curr_data_keys);
-        }
-
-        prev_ctrl_keys = all_keys.get("ctrl").unwrap().to_vec();
-        prev_data_keys = all_keys.get("data").unwrap().to_vec();
-        std::io::stdout().flush().unwrap();
-        
-        // Add new keys to a buffer
-        for key in &new_data_keys {
-            if delimiters.contains(key){
-                for index in 0..buffer.len() {
-                    if buffer[index] == None { break }
-                    buffer[index] = None;
+        match receiver.next_event() {
+            // Key Down
+            message_loop::Event::Keyboard {
+                vk,
+                action: Action::Press,
+                ..
+            } => {
+                // is shift
+                if vk == Vk::Shift {
+                    is_shift += 1;
+                } else if vk == Vk::F2 {
+                    send_input(&[
+                        Input::from_vk(Vk::A, Action::Press),
+                        Input::from_vk(Vk::B, Action::Press),
+                        Input::from_vk(Vk::C, Action::Press),
+                        Input::from_vk(Vk::D, Action::Press),
+                    ]);
                 }
-                buffer_next = 0;
-                break;
-            }
-            
-            buffer[buffer_next] = Some(key.to_string());
-            buffer_next += 1;
-            if buffer_next >= buffer.len() { buffer_next = 0 };
+                // is character
+                else {
+                    key = Some(vk);
+                }
+            },
+            // Key Up
+            message_loop::Event::Keyboard {
+                vk,
+                action: Action::Release,
+                ..
+            } => {
+                // is shift
+                if vk_to_string!(&vk).contains("Shift") { is_shift -= 1 }
+            },
+            _ => (),
         }
 
-        if &new_ctrl_keys.len() > &0 || &new_data_keys.len() > &0 {
-            for key in &buffer {
-                if let Some(value) = key {
-                    print!("{}", value);
-                } else {
-                    print!("{}", String::from("_"));
-                }
-            }
-            println!("");
-            std::io::stdout().flush().unwrap();
-            // println!("{:?}", buffer);
+        match key {
+            Some(vk) => {
+                input_string.push_str(&vk_to_string!(&vk, is_shift > 0));
+                println!("{}", input_string);
+            },
+            None => ()
         }
     }
-    // if end of buffer matches a patter - replace
-}
-
-fn get_new_keys(prev_keys: &Vec<String>, curr_keys: &Vec<String>) -> Vec<String> {
-    let mut new_keys: Vec<String> = Vec::new();
-    for key in curr_keys {
-        if !prev_keys.contains(&key) {
-            new_keys.push(String::from(key));
-        }
-    }
-    new_keys
 }
