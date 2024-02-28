@@ -4,6 +4,97 @@ use winput::{Input, Vk};
 //    println!("{}", std::any::type_name::<T>())
 //}
 
+pub const VK_CHARACTERS: [Vk; 45] = [
+    Vk::A,
+    Vk::B,
+    Vk::C,
+    Vk::D,
+    Vk::E,
+    Vk::F,
+    Vk::G,
+    Vk::H,
+    Vk::I,
+    Vk::J,
+    Vk::K,
+    Vk::L,
+    Vk::M,
+    Vk::N,
+    Vk::O,
+    Vk::P,
+    Vk::Q,
+    Vk::R,
+    Vk::S,
+    Vk::T,
+    Vk::U,
+    Vk::V,
+    Vk::W,
+    Vk::X,
+    Vk::Y,
+    Vk::Z, 
+    Vk::_1,
+    Vk::_2,
+    Vk::_3,
+    Vk::_4,
+    Vk::_5,
+    Vk::_6,
+    Vk::_7,
+    Vk::_8,
+    Vk::_9,
+    Vk::_0,
+    Vk::Minus,
+    Vk::Plus,
+    Vk::Oem1,
+    Vk::Oem2,
+    Vk::Oem3,
+    Vk::Oem4,
+    Vk::Oem5,
+    Vk::Oem6,
+    Vk::Oem7,
+];
+
+pub const VK_WHITESPACE: [Vk; 3] = [
+    Vk::Space,
+    Vk::Tab,
+    Vk::Enter,
+];
+
+pub const VK_CONTROL: [Vk; 18] = [
+    Vk::Alt,
+    Vk::Control,
+    Vk::CapsLock,
+    Vk::LeftWin,
+    Vk::RightWin,
+    Vk::Insert,
+    Vk::F1,
+    Vk::F2,
+    Vk::F3,
+    Vk::F4,
+    Vk::F5,
+    Vk::F6,
+    Vk::F7,
+    Vk::F8,
+    Vk::F9,
+    Vk::F10,
+    Vk::F11,
+    Vk::F12,
+];
+
+pub const VK_NAVIGATION: [Vk; 8] = [
+    Vk::UpArrow,
+    Vk::DownArrow,
+    Vk::RightArrow,
+    Vk::LeftArrow,
+    Vk::PageUp,
+    Vk::PageDown,
+    Vk::Home,
+    Vk::End,
+];
+
+pub const VK_DELETEION: [Vk; 2] = [
+    Vk::Delete,
+    Vk::Backspace,
+];
+
 pub fn vk_to_string(vk: &Vk, shift: bool) -> String{
     match vk {
         Vk::A => if shift { "A".to_string() } else { "a".to_string() },
@@ -42,18 +133,6 @@ pub fn vk_to_string(vk: &Vk, shift: bool) -> String{
         Vk::_8 => if shift { "*".to_string() } else {  "8".to_string() },
         Vk::_9 => if shift { "(".to_string() } else {  "9".to_string() },
         Vk::_0 => if shift { ")".to_string() } else {  "0".to_string() },
-        Vk::F1 => "F1".to_string(),
-        Vk::F2 => "F2".to_string(),
-        Vk::F3 => "F3".to_string(),
-        Vk::F4 => "F4".to_string(),
-        Vk::F5 => "F5".to_string(),
-        Vk::F6 => "F6".to_string(),
-        Vk::F7 => "F7".to_string(),
-        Vk::F8 => "F8".to_string(),
-        Vk::F9 => "F9".to_string(),
-        Vk::F10 => "F10".to_string(),
-        Vk::F11 => "F11".to_string(),
-        Vk::F12 => "F12".to_string(),
         Vk::Oem1 => if shift { ":".to_string() } else {  ";".to_string() },
         Vk::Oem2 => if shift { "?".to_string() } else {  "/".to_string() },
         Vk::Oem3 => if shift { "~".to_string() } else {  "`".to_string() },
@@ -65,6 +144,18 @@ pub fn vk_to_string(vk: &Vk, shift: bool) -> String{
         Vk::Minus => if shift { "_".to_string() } else {  "-".to_string() },
         Vk::Plus => if shift { "+".to_string() } else {  "=".to_string() },
         Vk::Shift => "Shift".to_string(),
+        Vk::Comma => if shift { "<".to_string() } else {  ",".to_string() },
+        Vk::Period => if shift { ">".to_string() } else {  ".".to_string() },
+        Vk::Numpad0 => "0".to_string(),
+        Vk::Numpad1 => "1".to_string(),
+        Vk::Numpad2 => "2".to_string(),
+        Vk::Numpad3 => "3".to_string(),
+        Vk::Numpad4 => "4".to_string(),
+        Vk::Numpad5 => "5".to_string(),
+        Vk::Numpad6 => "6".to_string(),
+        Vk::Numpad7 => "7".to_string(),
+        Vk::Numpad8 => "8".to_string(),
+        Vk::Numpad9 => "9".to_string(),
         _ => "!".to_string(),
     }
 }
@@ -80,5 +171,5 @@ macro_rules! vk_to_string {
 }
 
 pub fn send_input(output: &[Input]) -> u32 {
-    return winput::send_inputs(output);
+    winput::send_inputs(output)
 }
